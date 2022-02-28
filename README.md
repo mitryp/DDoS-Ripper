@@ -6,6 +6,7 @@ To start using the automated ripper, do all the first steps from USAGE section o
 Instead of it, run: _(example)_ `_python3_ main.py sites.txt`. Note that the python command can differ from machine to machine, so you should use the command that works for you (`python3`, `py`, `python3.8`). If your command differs from "python3", then you must specify it when running the script with `-c {your command}`.
 
 Other CLI options can be displayed with `-h` flag.
+
 Other usage examples: 
 
 `py main.py sites.txt -c py`
