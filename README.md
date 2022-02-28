@@ -1,4 +1,23 @@
-# DDoS-Ripper
+# RipperAutomated
+This is a fork from (https://github.com/palahsu/DDoS-Ripper)[DDoS-Ripper] with automated DDoSing available sites from specified list.
+To start using the automated ripper, do all the first steps from USAGE section of description except the last command.
+Instead of it, run: _(example)_ `_python3_ main.py sites.txt`. Note that the python command can differ from machine to machine, so you should use the command that works for you (`python3`, `py`, `python3.8`). If your command differs from "python3", then you must specify it when running the script with `... -c {your command}`.
+Other usage examples: 
+`py main.py sites.txt -c py`
+`python3.8 main.py sites.txt -c python3.8`
+
+## URLs file
+You mast specify addresses to attack on in the separate file. It has to be a text file containing URLs one per line.
+Example:
+```
+example.com
+www.other-example.com/
+http://site.org
+https://new-site.net
+```
+
+You can still use the original DDoS-Ripper commands with `python3 DRipeer.py {args}`.
+___
 
 # What is a DDoS Attack?
 A Distributable Denied-of-Service (DDOS) attack server that cuts off targets or surrounding infrastructure in a flood of Internet traffic
