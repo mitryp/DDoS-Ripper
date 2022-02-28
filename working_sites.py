@@ -1,3 +1,5 @@
+import argparse
+import os.path
 import time
 from sys import argv
 
@@ -5,18 +7,21 @@ import requests as r
 import logging
 import threading
 
+from pip._internal.utils import urls
+
 WORKING = list()
+ALL: bool = True
+TIMEOUT: int = 5
 
 
-def is_error_code(c) -> bool:
-    if type(c) == str:
+def is_error_code(c: str) -> bool:
+    if c.isdigit():
+        return int(c) >= 400
+    else:
         return c == 'Exception'
-    elif type(c) == int:
-        return c >= 400
-    return True
 
 
-def test_next_url(URLS: list, timeout: int = 5):
+def test_next_url(URLS: list, timeout: int = TIMEOUT):
     if not URLS:
         return None
 
@@ -32,7 +37,8 @@ def test_next_url(URLS: list, timeout: int = 5):
         status = 'Exception'
 
     if __name__ == '__main__':
-        logging.info(f'{url} {status=}')
+        if not is_error_code(status) or ALL:
+            logging.info(f'{url} {status=}')
 
     if not is_error_code(status):
         WORKING.append(url)
@@ -51,20 +57,37 @@ def test(urls: list) -> list:
 
 
 def get_working_sites(urls: list) -> list:
-    print("Getting new list of working sites")
-    sleep_time = len(urls)*.5
+    sleep_time = len(urls) * .5
     w = test(urls)
     while len(urls) != 0:
         time.sleep(1)
     time.sleep(sleep_time)
-    print(w)
     return w
 
 
 if __name__ == '__main__':
-    URLS_PATH = argv[1]
-    with open(URLS_PATH, 'r', encoding='utf-8') as f:
-        urls = f.readlines()
+    parser = argparse.ArgumentParser(description='Run through the list of urls and get all the working sites.')
+    parser.add_argument('source',
+                        metavar='SOURCE',
+                        type=str,
+                        help='A path to the file containing the links to sites (one link per line)',
+                        action='store'
+                        )
+    parser.add_argument('-a', '--all', action='store_true', help='A flag to display all the sites. Default is False, '
+                                                                 'displays only working sites')
+    parser.add_argument('-t', '--timeout', type=int, action='store', default=5, help='A request timeout in seconds. By'
+                                                                                     ' default, 5')
+
+    args = parser.parse_args(argv[1:])
+    PATH = args.source
+    ALL = args.all
+    TIMEOUT = args.timeout
+
+    if not os.path.exists(PATH):
+        print('File does not exist: %s' % PATH)
+        exit(1)
+
+    with open(PATH, 'r', encoding='utf-8') as f:
+        urls = [u.strip() for u in f.readlines() if not u.strip().startswith('#')]
 
     test(urls)
-
